@@ -11,7 +11,7 @@ var connection = mysql.createConnection({
   user: "root",
 
   // Your password
-  password: "",
+  password: "pChrms1115",
   database: "Bamazon"
 });
 
@@ -32,7 +32,7 @@ connection.connect(function(err) {
 function showDb() {
     connection.query("select * from products", function(err, data) {
 	for(var i = 0; i < data.length; i++) {
-	    console.log("ID: " + data[i].id + " Product: " + data[i].product_name +  " Price: $" + data[i].price);
+	    console.log("ID: " + data[i].id + " | Product: " + data[i].product_name +  " | Price: $" + data[i].price);
 	};
     });
 }
@@ -60,11 +60,15 @@ function purchase() {
 	    } else if (parseInt(answers.quantity) < results.stock_quantity) {
 		var newQuant = results.stock_quantity - parseInt(answers.quantity);
 		connection.query("update products set ? where ?", [{stock_quantity: newQuant}, {id: parseInt(answers.ID)}], function(err, data) {
-		    console.log("Your total is: $" + results.price * parseInt(answers.quantity));
-		    showDb();
-		    setTimeout(function() {
-			purchase();
-		    }, 1000);
+		    if (err) {
+			console.log(err);
+		    } else {
+			console.log("Your total is: $" + results.price * parseInt(answers.quantity));
+			showDb();
+			setTimeout(function() {
+			    purchase();
+			}, 1000);
+		    }
 		}); // close connection update
 	    } else {
 		console.log("We don't have that item.");
@@ -75,4 +79,5 @@ function purchase() {
 	    }
 	}); // close connection select 
     }); // close .then
-} // close purchase function
+}; // close purchase function
+    
